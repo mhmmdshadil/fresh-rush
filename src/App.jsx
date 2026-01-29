@@ -20,7 +20,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
 import { MOCK_PRODUCE, MOCK_BUYERS } from './data/mockData';
 import { useCountdown } from './hooks/useCountdown';
 import AddProduceModal from './components/AddProduceModal';
@@ -103,7 +102,9 @@ const BuyerCard = ({ buyer }) => (
     <div className="buyer-header">
       <div className="buyer-name">{buyer.name}</div>
       {buyer.pickupType === 'Instant Pickup' && (
-        <span className="instant-pickup-badge"><Zap size={10} inline /> INSTANT</span>
+        <span className="instant-pickup-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <Zap size={10} /> INSTANT
+        </span>
       )}
     </div>
     <div className="buyer-stats">
