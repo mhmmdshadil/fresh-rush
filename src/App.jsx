@@ -17,7 +17,8 @@ import {
   TrendingUp,
   Package,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOCK_PRODUCE, MOCK_BUYERS } from './data/mockData';
@@ -125,8 +126,6 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(MOCK_PRODUCE[0] || null);
   const [notifications, setNotifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  if (!products || products.length === 0) return <div style={{ color: 'white', padding: '20px' }}>Initializing Command Center...</div>;
 
   // Priority Sorting Logic
   const sortedProducts = useMemo(() => {
@@ -268,7 +267,7 @@ function App() {
         <div className="panel-header">
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', marginBottom: '8px' }}>Nearby Matches</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            Finding buyers for <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{selectedProduct?.name}</span>
+            finding buyers for <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{selectedProduct?.name || 'Produce'}</span>
           </p>
         </div>
 
