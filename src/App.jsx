@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   BarChart3,
@@ -18,24 +17,35 @@ import {
   Package,
   Zap,
   ArrowRight,
-  Plus
+  Plus,
+  User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MOCK_PRODUCE, MOCK_BUYERS } from './data/mockData';
 import { useCountdown } from './hooks/useCountdown';
 import AddProduceModal from './components/AddProduceModal';
+import AuthModal from './components/AuthModal';
+import { onAuthChange, logOut, getCurrentUser } from './services/authService';
+import { subscribeToUserProduce, cancelProduce, addProduce } from './services/produceService';
+import { getAllBuyers } from './services/buyerService';
+import { seedBuyers } from './utils/seedData';
 import './App.css';
 
 // --- Sub-components ---
 
 const StatCard = ({ label, value, icon: Icon, color }) => (
-  <div className="glass-panel stat-card">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    whileHover={{ scale: 1.02, y: -4 }}
+    className="glass-panel stat-card"
+    style={{ cursor: 'default' }}
+  >
     <div className="stat-label">{label}</div>
     <div className="stat-value" style={{ color }}>{value}</div>
     <div style={{ position: 'absolute', right: '20px', bottom: '20px', opacity: 0.1 }}>
       <Icon size={48} />
     </div>
-  </div>
+  </motion.div>
 );
 
 const ProductCard = ({ product, onSelect, onCancel, isActive }) => {
@@ -49,6 +59,8 @@ const ProductCard = ({ product, onSelect, onCancel, isActive }) => {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ scale: 1.01 }}
       className={`glass-panel product-card ${urgency} ${isActive ? 'active-match' : ''} ${urgency === 'critical' ? 'animate-pulse-critical' : ''} ${urgency === 'expired' ? 'grayscale' : ''}`}
       onClick={() => onSelect(product)}
       style={{ cursor: 'pointer', borderColor: isActive ? 'var(--primary)' : 'var(--glass-border)' }}
@@ -86,7 +98,7 @@ const ProductCard = ({ product, onSelect, onCancel, isActive }) => {
             className="buyer-action-btn"
             style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--status-critical)', border: 'none' }}
           >
-            Simulate Cancel
+            Cancel Order
           </button>
         )}
       </div>
@@ -94,10 +106,11 @@ const ProductCard = ({ product, onSelect, onCancel, isActive }) => {
   );
 };
 
-const BuyerCard = ({ buyer }) => (
+const BuyerCard = ({ buyer, onAccept }) => (
   <motion.div
     initial={{ opacity: 0, x: 20 }}
     animate={{ opacity: 1, x: 0 }}
+    whileHover={{ scale: 1.02 }}
     className="glass-panel buyer-card"
   >
     <div className="buyer-header">
@@ -115,17 +128,76 @@ const BuyerCard = ({ buyer }) => (
     <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
       Slots: {buyer.availableSlots.join(', ')}
     </div>
-    <button className="buyer-action-btn">Accept Offer</button>
+    <button
+      className="buyer-action-btn"
+      onClick={() => onAccept(buyer)}
+    >
+      Accept Offer
+    </button>
   </motion.div>
 );
 
 // --- Main App Component ---
 
 function App() {
-  const [products, setProducts] = useState(MOCK_PRODUCE);
-  const [selectedProduct, setSelectedProduct] = useState(MOCK_PRODUCE[0] || null);
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [buyers, setBuyers] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Auth state listener
+  useEffect(() => {
+    const unsubscribe = onAuthChange((currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+      if (!currentUser) {
+        setIsAuthModalOpen(true);
+        setProducts([]);
+        setBuyers([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Subscribe to user's produce
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = subscribeToUserProduce(user.uid, (produceData) => {
+      setProducts(produceData);
+      if (produceData.length > 0 && !selectedProduct) {
+        setSelectedProduct(produceData[0]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Load buyers
+  useEffect(() => {
+    if (!user) return;
+
+    const loadBuyers = async () => {
+      try {
+        // Seed buyers if none exist
+        await seedBuyers();
+
+        // Then load all buyers
+        const buyersData = await getAllBuyers();
+        setBuyers(buyersData);
+      } catch (error) {
+        console.error('Error loading buyers:', error);
+        addNotification('Failed to load buyers', 'critical');
+      }
+    };
+
+    loadBuyers();
+  }, [user]);
 
   // Priority Sorting Logic
   const sortedProducts = useMemo(() => {
@@ -139,19 +211,45 @@ function App() {
     });
   }, [products]);
 
-  const handleCancel = (id) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'Cancelled' } : p));
-    const product = products.find(p => p.id === id);
-    addNotification(`ALERT: Primary buyer cancelled for ${product.name}! Finding alternatives...`, 'critical');
+  const handleCancel = async (id) => {
+    try {
+      await cancelProduce(id);
+      const product = products.find(p => p.id === id);
+      addNotification(`ALERT: Order cancelled for ${product.name}! Finding alternatives...`, 'critical');
+    } catch (error) {
+      console.error('Error cancelling produce:', error);
+      addNotification('Failed to cancel order', 'critical');
+    }
   };
 
-  const handleAddProduce = (newProduct) => {
-    setProducts(prev => [newProduct, ...prev]);
-    addNotification(`Produce registered: ${newProduct.name} is now live in the system.`, 'fresh');
+  const handleAddProduce = async (newProduct) => {
+    try {
+      await addProduce(newProduct, user.uid);
+      addNotification(`Produce registered: ${newProduct.name} is now live in the system.`, 'fresh');
+    } catch (error) {
+      console.error('Error adding produce:', error);
+      addNotification('Failed to add produce', 'critical');
+    }
+  };
+
+  const handleAcceptOffer = (buyer) => {
+    addNotification(`Offer accepted from ${buyer.name}! Preparing for pickup...`, 'fresh');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      addNotification('Logged out successfully', 'fresh');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      addNotification('Failed to logout', 'critical');
+    }
   };
 
   // Notifications Simulation
   useEffect(() => {
+    if (!user) return;
+
     const checkUrgency = () => {
       products.forEach(p => {
         if (p.status === 'Cancelled') {
@@ -165,7 +263,7 @@ function App() {
 
     const interval = setInterval(checkUrgency, 30000); // Check every 30s
     return () => clearInterval(interval);
-  }, [products]);
+  }, [products, user]);
 
   const addNotification = (message, type) => {
     const id = Date.now();
@@ -177,9 +275,43 @@ function App() {
 
   const stats = {
     atRisk: products.filter(p => p.status === 'Cancelled').length,
-    totalVolume: "4,800 kg",
-    activeBuyers: MOCK_BUYERS.length
+    totalVolume: products.reduce((sum, p) => {
+      const qty = parseInt(p.quantity) || 0;
+      return sum + qty;
+    }, 0) + ' kg',
+    activeBuyers: buyers.length
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: 'var(--bg-main)'
+      }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Zap size={48} color="var(--primary)" />
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Show auth modal if not logged in
+  if (!user) {
+    return (
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => { }}
+        onAuthSuccess={() => setIsAuthModalOpen(false)}
+      />
+    );
+  }
 
   return (
     <div className="app-container dashboard">
@@ -196,7 +328,9 @@ function App() {
           <div className="nav-item"><BarChart3 size={20} /> Analytics</div>
           <div className="nav-item"><MapPin size={20} /> Farm Map</div>
           <div style={{ marginTop: 'auto' }} className="nav-item"><Settings size={20} /> Settings</div>
-          <div className="nav-item"><LogOut size={20} /> Logout</div>
+          <div className="nav-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+            <LogOut size={20} /> Logout
+          </div>
         </nav>
       </aside>
 
@@ -205,17 +339,27 @@ function App() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)' }}>Farmer Command Center</h1>
-            <p style={{ color: 'var(--text-muted)' }}>Real-time produce decay & buyer matching system</p>
+            <p style={{ color: 'var(--text-muted)' }}>
+              Welcome back, <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{user.displayName || user.email}</span>
+            </p>
           </div>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <div className="glass-panel" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="glass-panel"
+              style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+            >
               <Bell size={18} />
               <span style={{ fontSize: '0.875rem' }}>{notifications.length} Alerts</span>
-            </div>
-            <div className="glass-panel" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Search size={18} />
-              <span style={{ fontSize: '0.875rem' }}>Search...</span>
-            </div>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="glass-panel"
+              style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+            >
+              <User size={18} />
+              <span style={{ fontSize: '0.875rem' }}>Profile</span>
+            </motion.div>
           </div>
         </header>
 
@@ -231,27 +375,44 @@ function App() {
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem' }}>Priority Pulse Stack</h2>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Dynamic AI-sorted urgency queue</p>
             </div>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsModalOpen(true)}
               className="buyer-action-btn"
               style={{ width: 'auto', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               <Plus size={18} /> Register Produce
-            </button>
+            </motion.button>
           </div>
 
           <div className="product-stack">
-            <AnimatePresence mode="popLayout">
-              {sortedProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onSelect={setSelectedProduct}
-                  onCancel={handleCancel}
-                  isActive={selectedProduct?.id === product.id}
-                />
-              ))}
-            </AnimatePresence>
+            {sortedProducts.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="glass-panel"
+                style={{ padding: '40px', textAlign: 'center' }}
+              >
+                <Leaf size={48} color="var(--text-dim)" style={{ margin: '0 auto 16px' }} />
+                <h3 style={{ color: 'var(--text-muted)', marginBottom: '8px' }}>No produce registered yet</h3>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>
+                  Click "Register Produce" to add your first item
+                </p>
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {sortedProducts.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onSelect={setSelectedProduct}
+                    onCancel={handleCancel}
+                    isActive={selectedProduct?.id === product.id}
+                  />
+                ))}
+              </AnimatePresence>
+            )}
           </div>
         </section>
 
@@ -272,15 +433,24 @@ function App() {
         </div>
 
         <div className="buyer-list">
-          {MOCK_BUYERS.map(buyer => (
-            <BuyerCard key={buyer.id} buyer={buyer} />
-          ))}
+          {buyers.length === 0 ? (
+            <div className="glass-panel" style={{ padding: '20px', textAlign: 'center' }}>
+              <Truck size={32} color="var(--text-dim)" style={{ margin: '0 auto 12px' }} />
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                No buyers available
+              </p>
+            </div>
+          ) : (
+            buyers.map(buyer => (
+              <BuyerCard key={buyer.id} buyer={buyer} onAccept={handleAcceptOffer} />
+            ))
+          )}
         </div>
 
         <div style={{ marginTop: '24px', padding: '16px', border: '1px dashed var(--glass-border)', borderRadius: '12px' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '8px' }}>BACKEND INTEGRATION POINT</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '8px' }}>🔥 LIVE MATCHING</div>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Matching algorithm uses distance, price, and decay window to optimize route planning.
+            AI algorithm optimizes distance, price, and decay window for best matches.
           </p>
         </div>
       </aside>

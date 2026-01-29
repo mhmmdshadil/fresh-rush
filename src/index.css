@@ -1,32 +1,75 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
+  /* Material Design 3 Color System */
   --primary: #10b981;
+  --primary-container: rgba(16, 185, 129, 0.15);
   --primary-glow: rgba(16, 185, 129, 0.4);
+  --on-primary: #ffffff;
+  
   --secondary: #3b82f6;
+  --secondary-container: rgba(59, 130, 246, 0.15);
+  --on-secondary: #ffffff;
+  
   --accent: #8b5cf6;
+  --accent-container: rgba(139, 92, 246, 0.15);
 
+  /* Surface Colors */
+  --surface: #07090e;
+  --surface-variant: rgba(21, 25, 36, 0.7);
+  --surface-container: rgba(30, 41, 59, 0.8);
+  --surface-container-high: rgba(51, 65, 85, 0.9);
+  --on-surface: #f8fafc;
+  --on-surface-variant: #94a3b8;
+
+  /* Background */
   --bg-dark: #07090e;
+  --bg-main: #07090e;
   --bg-card: rgba(21, 25, 36, 0.7);
   --bg-card-hover: rgba(30, 41, 59, 0.8);
 
+  /* Text */
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
+  /* Status Colors */
   --status-fresh: #10b981;
   --status-approaching: #f59e0b;
   --status-critical: #ef4444;
   --status-expired: #7f1d1d;
 
+  /* Material Design 3 Elevation */
+  --elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elevation-2: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.15), 0 2px 3px 0 rgba(0, 0, 0, 0.3);
+  --elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px 0 rgba(0, 0, 0, 0.3);
+
+  /* Glass Effect */
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
 
+  /* State Layers (for hover, focus, etc.) */
+  --state-hover-opacity: 0.08;
+  --state-focus-opacity: 0.12;
+  --state-pressed-opacity: 0.12;
+
+  /* Typography */
   --font-main: 'Plus Jakarta Sans', sans-serif;
   --font-display: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Layout */
   --sidebar-width: 260px;
+  
+  /* Border Radius (Material Design 3) */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
 }
 
 * {
@@ -34,6 +77,7 @@
   padding: 0;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -42,6 +86,7 @@ body {
   font-family: var(--font-main);
   overflow-x: hidden;
   height: 100vh;
+  line-height: 1.6;
 }
 
 #root {
@@ -54,21 +99,91 @@ body {
   width: 100%;
   min-height: 100vh;
   background: radial-gradient(circle at 50% 0%, #111827 0%, #07090e 100%);
+  position: relative;
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphism Classes with Material Design 3 */
 .glass-panel {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Scrollbar Styling */
+.glass-panel:hover {
+  box-shadow: var(--elevation-3);
+}
+
+/* Material Design 3 State Layers */
+.state-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.state-layer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.state-layer:hover::before {
+  opacity: var(--state-hover-opacity);
+}
+
+.state-layer:focus::before {
+  opacity: var(--state-focus-opacity);
+}
+
+.state-layer:active::before {
+  opacity: var(--state-pressed-opacity);
+}
+
+/* Ripple Effect */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::after {
+  width: 300px;
+  height: 300px;
+  animation: ripple 0.6s ease-out;
+}
+
+/* Scrollbar Styling (Material Design 3) */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -77,11 +192,14 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+  background-clip: padding-box;
 }
 
 /* Animations */
@@ -100,7 +218,6 @@ body {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
@@ -115,10 +232,66 @@ body {
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .animate-pulse-critical {
   animation: pulse-critical 2s infinite;
 }
 
 .animate-shake {
   animation: shake 0.5s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Focus Visible (Accessibility) */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Selection */
+::selection {
+  background: var(--primary-container);
+  color: var(--on-primary);
+}
+
+/* Utility Classes */
+.elevation-1 { box-shadow: var(--elevation-1); }
+.elevation-2 { box-shadow: var(--elevation-2); }
+.elevation-3 { box-shadow: var(--elevation-3); }
+.elevation-4 { box-shadow: var(--elevation-4); }
+.elevation-5 { box-shadow: var(--elevation-5); }
+
+/* Grayscale Filter */
+.grayscale {
+  filter: grayscale(0.7);
+  opacity: 0.6;
 }
