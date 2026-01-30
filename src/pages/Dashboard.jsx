@@ -23,39 +23,14 @@ import { seedBuyers } from '../utils/seedData';
 
 // --- Sub-components (Moved from App.jsx) ---
 
-const StatCard = ({ label, value, icon: Icon, color }) => (
-    <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        whileHover={{ x: -4, backgroundColor: 'rgba(255,255,255,0.05)' }}
-        className="glass-panel"
-        style={{
-            cursor: 'default',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '24px 32px',
-            borderRadius: '24px',
-            marginBottom: '16px',
-            border: '1px solid var(--glass-border)',
-            background: 'rgba(255,255,255,0.02)'
-        }}
-    >
-        <div>
-            <div className="stat-value" style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '4px' }}>{value}</div>
-            <div className="stat-label" style={{ margin: 0, fontSize: '0.85rem', textTransform: 'none', color: 'var(--text-muted)' }}>{label}</div>
+const StatCard = ({ label, value, icon: Icon }) => (
+    <div className="stat-card">
+        <div style={{ marginBottom: '12px', background: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '50%' }}>
+            <Icon size={24} color="#dec09a" />
         </div>
-        <div style={{
-            padding: '12px',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '14px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
-            <Icon size={24} color={color || 'var(--text-main)'} />
-        </div>
-    </motion.div>
+        <div className="stat-value">{value}</div>
+        <div className="stat-label">{label}</div>
+    </div>
 );
 
 const ProductCard = ({ product, onSelect, onCancel, isActive }) => {
@@ -235,117 +210,101 @@ const Dashboard = ({ user, onNotification }) => {
     return (
         <>
             <main className="main-content">
-                <header style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(400px, 1.5fr) 1fr',
-                    gap: '40px',
-                    marginBottom: '80px',
-                    alignItems: 'start'
+                {/* Hero Section - Organic Shapes & Serif Type */}
+                <section style={{
+                    position: 'relative',
+                    padding: '40px 0 80px',
+                    marginBottom: '40px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    minHeight: '400px'
                 }}>
-                    <div style={{ paddingTop: '20px' }}>
+                    {/* Abstract Organic Leaf Shape (CSS) */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '-100px',
+                        right: '-100px',
+                        width: '600px',
+                        height: '600px',
+                        background: '#8b5e3c',
+                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                        opacity: 0.2,
+                        zIndex: 0,
+                        transform: 'rotate(24deg)'
+                    }} />
+                    <div style={{
+                        position: 'absolute',
+                        top: '100px',
+                        right: '100px',
+                        width: '300px',
+                        height: '300px',
+                        background: '#dec09a',
+                        borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
+                        opacity: 0.1,
+                        zIndex: 0
+                    }} />
+
+                    <div style={{ position: 'relative', zIndex: 1, maxWidth: '600px' }}>
                         <motion.h1
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             style={{
-                                fontSize: '4rem',
+                                fontSize: '5.5rem',
                                 fontFamily: 'var(--font-display)',
-                                lineHeight: '1.1',
+                                lineHeight: '0.9',
                                 marginBottom: '24px',
-                                fontWeight: 600,
-                                letterSpacing: '-1px'
+                                color: '#dec09a', /* Beige Title */
+                                letterSpacing: '-2px'
                             }}
                         >
-                            Green<br />
-                            <span style={{ color: 'var(--text-muted)', fontWeight: 300 }}>Operations</span>
+                            Fresh<br />
+                            Harvest
                         </motion.h1>
 
                         <p style={{
                             color: 'var(--text-muted)',
-                            fontSize: '1.1rem',
-                            maxWidth: '480px',
+                            fontSize: '1.2rem',
+                            lineHeight: '1.6',
                             marginBottom: '40px',
-                            lineHeight: '1.6'
+                            maxWidth: '400px'
                         }}>
-                            Revolutionizing agricultural logistics with AI-driven decay prediction and instant buyer matching.
+                            Cultivating sustainable connections between organic farms and local markets.
                         </p>
 
-                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setIsModalOpen(true)}
-                                className="buyer-action-btn"
-                                style={{
-                                    width: 'auto',
-                                    background: 'white',
-                                    color: 'black',
-                                    padding: '16px 32px',
-                                    borderRadius: '40px',
-                                    fontSize: '1rem'
-                                }}
-                            >
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    Open Catalog <Plus size={18} />
-                                </span>
-                            </motion.button>
-
-                            <motion.button
-                                whileHover={{ x: 4 }}
-                                onClick={() => navigate('/analytics')}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'var(--text-main)',
-                                    cursor: 'pointer',
-                                    fontSize: '1rem',
-                                    fontWeight: 500,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                View Analytics <TrendingUp size={16} />
-                            </motion.button>
-                        </div>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="buyer-action-btn"
+                            style={{ width: 'auto', padding: '16px 48px' }}
+                        >
+                            Register Produce
+                        </button>
                     </div>
+                </section>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <StatCard
-                            label="Critical Alerts"
-                            value={stats.atRisk}
-                            icon={AlertTriangle}
-                            color="var(--status-critical)"
-                        />
-                        <StatCard
-                            label="Total Volume"
-                            value={stats.totalVolume}
-                            icon={Package}
-                            color="var(--text-main)"
-                        />
-                        <StatCard
-                            label="Logistics Partners"
-                            value={stats.activeBuyers}
-                            icon={Truck}
-                            color="var(--status-fresh)"
-                        />
-                        <div style={{
-                            marginTop: '16px',
-                            padding: '24px',
-                            background: 'rgba(255,255,255,0.02)',
-                            borderRadius: '24px',
-                            border: '1px solid var(--glass-border)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                        }}>
-                            <div>
-                                <div style={{ fontSize: '2rem', fontFamily: 'var(--font-display)', fontWeight: 700 }}>98%</div>
-                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Network Uptime</div>
-                            </div>
-                            <CheckCircle size={24} color="var(--status-fresh)" />
-                        </div>
-                    </div>
-                </header>
+                {/* Wide Stats Strip (Green Bar) */}
+                <section className="stats-grid">
+                    <StatCard
+                        label="Critical Alerts"
+                        value={stats.atRisk}
+                        icon={AlertTriangle}
+                    />
+                    <StatCard
+                        label="Total Harvest"
+                        value={stats.totalVolume}
+                        icon={Package}
+                    />
+                    <StatCard
+                        label="Active Fleets"
+                        value={stats.activeBuyers}
+                        icon={Truck}
+                    />
+                    <StatCard
+                        label="Market Demand"
+                        value="High"
+                        icon={TrendingUp}
+                    />
+                </section>
 
                 <section className="product-stack-container">
                     <div className="product-stack-header">
