@@ -16,25 +16,21 @@ const Settings = () => {
     const [selectedLang, setSelectedLang] = useState('English (US)');
     const languages = ['English (US)', 'Malayalam', 'Hindi', 'Spanish'];
 
-    // Effect to apply dark mode (Simulated class toggle)
-    useEffect(() => {
-        // In a real app, this would toggle a class on the body
-        // document.body.classList.toggle('dark-theme', darkMode);
-    }, [darkMode]);
-
     return (
         <main className="main-content" style={{ overflowY: 'auto' }}>
-            <header style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)' }}>Settings</h1>
-                <p style={{ color: 'var(--text-muted)' }}>Configure your preferences and security</p>
+            <header style={{ marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-display)', lineHeight: '1.2' }}>Global <span style={{ color: 'var(--primary)' }}>Settings</span></h1>
+                <p style={{ color: 'var(--text-muted)' }}>Configure your preferences and security protocol</p>
             </header>
 
-            <div style={{ display: 'grid', gap: '24px' }}>
+            <div style={{ display: 'grid', gap: '32px', maxWidth: '800px' }}>
 
                 {/* Account Section - Navigation Links */}
                 <section>
-                    <h2 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--primary)' }}>Account</h2>
-                    <div className="glass-panel" style={{ padding: '0' }}>
+                    <h2 style={{ fontSize: '1.25rem', marginBottom: '16px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <User size={20} color="var(--primary)" /> Account Control
+                    </h2>
+                    <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
                         <SettingLink
                             icon={User}
                             label="Edit Profile"
@@ -59,8 +55,10 @@ const Settings = () => {
 
                 {/* Notifications Section - Functional Toggles */}
                 <section>
-                    <h2 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--secondary)' }}>Notifications</h2>
-                    <div className="glass-panel" style={{ padding: '0' }}>
+                    <h2 style={{ fontSize: '1.25rem', marginBottom: '16px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Bell size={20} color="var(--primary)" /> Notifications
+                    </h2>
+                    <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
                         <SettingToggle
                             icon={Bell}
                             label="Push Notifications"
@@ -81,12 +79,14 @@ const Settings = () => {
 
                 {/* App Section - Toggles & Dropdown */}
                 <section>
-                    <h2 style={{ fontSize: '1.2rem', marginBottom: '16px', color: 'var(--text-main)' }}>Application</h2>
-                    <div className="glass-panel" style={{ padding: '0' }}>
+                    <h2 style={{ fontSize: '1.25rem', marginBottom: '16px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Globe size={20} color="var(--primary)" /> Application
+                    </h2>
+                    <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
                         <SettingToggle
                             icon={Moon}
                             label="Dark Mode"
-                            desc="Toggle application theme"
+                            desc="High-contrast landscape theme"
                             checked={darkMode}
                             onChange={setDarkMode}
                         />
@@ -96,12 +96,13 @@ const Settings = () => {
                             <div
                                 onClick={() => setLangOpen(!langOpen)}
                                 style={{
-                                    padding: '20px',
+                                    padding: '24px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
                                     cursor: 'pointer',
-                                    background: langOpen ? 'rgba(255,255,255,0.05)' : 'transparent'
+                                    background: langOpen ? 'rgba(255,255,255,0.03)' : 'transparent',
+                                    transition: 'background 0.2s'
                                 }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -109,11 +110,14 @@ const Settings = () => {
                                         <Globe size={20} color="var(--text-main)" />
                                     </div>
                                     <div>
-                                        <div style={{ fontSize: '1rem', fontWeight: 500 }}>Language</div>
-                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>{selectedLang}</div>
+                                        <div style={{ fontSize: '1rem', fontWeight: 600 }}>Language</div>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>{selectedLang}</div>
                                     </div>
                                 </div>
-                                <ChevronRight size={18} style={{ transform: langOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} color="var(--text-muted)" />
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--primary)' }}>{selectedLang}</span>
+                                    <ChevronRight size={18} style={{ transform: langOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} color="var(--text-muted)" />
+                                </div>
                             </div>
 
                             <AnimatePresence>
@@ -122,20 +126,20 @@ const Settings = () => {
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
-                                        style={{ overflow: 'hidden', background: 'rgba(0,0,0,0.2)' }}
+                                        style={{ overflow: 'hidden', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--glass-border)' }}
                                     >
                                         {languages.map((lang) => (
                                             <div
                                                 key={lang}
                                                 onClick={() => { setSelectedLang(lang); setLangOpen(false); }}
                                                 style={{
-                                                    padding: '12px 20px 12px 76px',
+                                                    padding: '16px 24px 16px 76px',
                                                     cursor: 'pointer',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     gap: '12px',
-                                                    color: selectedLang === lang ? 'var(--primary)' : 'var(--text-dim)',
-                                                    background: selectedLang === lang ? 'rgba(52, 211, 153, 0.1)' : 'transparent'
+                                                    color: selectedLang === lang ? 'var(--primary)' : 'var(--text-muted)',
+                                                    background: selectedLang === lang ? 'rgba(251, 191, 36, 0.05)' : 'transparent'
                                                 }}
                                             >
                                                 {lang}

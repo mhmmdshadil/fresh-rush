@@ -18,69 +18,91 @@ const EditProfile = () => {
 
     return (
         <main className="main-content" style={{ overflowY: 'auto' }}>
-            <header style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <header style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ x: -4 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => navigate('/settings')}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}
+                    style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--text-main)',
+                        cursor: 'pointer',
+                        padding: '12px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
                 >
-                    <ArrowLeft size={24} />
+                    <ArrowLeft size={20} />
                 </motion.button>
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)' }}>Edit Profile</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Update your public persona</p>
+                    <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-display)', lineHeight: '1.2', margin: 0 }}>Edit <span style={{ color: 'var(--primary)' }}>Profile</span></h1>
+                    <p style={{ color: 'var(--text-muted)' }}>Update your public persona and contact info</p>
                 </div>
             </header>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) 2fr', gap: '40px' }}>
                 {/* Avatar Section */}
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="glass-panel"
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px' }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px', height: 'fit-content' }}
                 >
                     <div style={{ position: 'relative' }}>
                         <div style={{
-                            width: '150px',
-                            height: '150px',
+                            width: '180px',
+                            height: '180px',
                             borderRadius: '50%',
+                            padding: '6px',
                             background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '4rem',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            border: '4px solid var(--glass-border)',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
                         }}>
-                            A
-                        </div>
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            style={{
-                                position: 'absolute',
-                                bottom: '0',
-                                right: '0',
-                                background: 'var(--text-main)',
-                                color: 'var(--bg-main)',
-                                border: 'none',
+                            <div style={{
+                                width: '100%',
+                                height: '100%',
                                 borderRadius: '50%',
-                                width: '40px',
-                                height: '40px',
+                                background: '#1a1a1a',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                cursor: 'pointer'
+                                fontSize: '5rem',
+                                fontWeight: 700,
+                                color: 'var(--primary)',
+                                fontFamily: 'var(--font-display)',
+                                overflow: 'hidden'
+                            }}>
+                                A
+                            </div>
+                        </div>
+                        <motion.button
+                            whileHover={{ scale: 1.1, rotate: 180 }}
+                            transition={{ duration: 0.3 }}
+                            style={{
+                                position: 'absolute',
+                                bottom: '10px',
+                                right: '10px',
+                                background: 'var(--primary)',
+                                color: 'var(--primary-text)',
+                                border: '4px solid #1a1a1a',
+                                borderRadius: '50%',
+                                width: '48px',
+                                height: '48px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                             }}
                         >
-                            <Camera size={20} />
+                            <Camera size={22} />
                         </motion.button>
                     </div>
-                    <p style={{ marginTop: '20px', color: 'var(--text-dim)', textAlign: 'center' }}>
-                        Allowed: JPG, PNG, GIF<br />Max size: 2MB
+                    <p style={{ marginTop: '24px', color: 'var(--text-muted)', textAlign: 'center', fontSize: '0.9rem' }}>
+                        <strong style={{ color: 'white', display: 'block', marginBottom: '4px' }}>Profile Photo</strong>
+                        Allowed formats: JPG, PNG, GIF<br />Max size: 2MB
                     </p>
                 </motion.div>
 

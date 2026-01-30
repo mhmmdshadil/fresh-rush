@@ -216,55 +216,106 @@ const Dashboard = ({ user, onNotification }) => {
     return (
         <>
             <main className="main-content">
-                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)' }}>Farmer Command Center</h1>
-                        <p style={{ color: 'var(--text-muted)' }}>
-                            Welcome back, <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{user.displayName || user.email}</span>
-                        </p>
+                {/* Hero Section - "Welcome Landscape" Style */}
+                <section style={{
+                    marginBottom: '40px',
+                    background: 'linear-gradient(to right, rgba(251, 191, 36, 0.1), transparent)',
+                    padding: '40px',
+                    borderRadius: '32px',
+                    border: '1px solid var(--glass-border)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                                <motion.h1
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    style={{ fontSize: '3rem', fontFamily: 'var(--font-display)', lineHeight: '1.2', marginBottom: '16px' }}
+                                >
+                                    Welcome back,<br />
+                                    <span style={{ color: 'var(--primary)' }}>{user.displayName || 'Farmer'}</span>
+                                </motion.h1>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '500px', marginBottom: '32px' }}>
+                                    Your command center is active. You have <span style={{ color: 'white', fontWeight: 'bold' }}>{stats.atRisk} critical alerts</span> requiring immediate attention today.
+                                </p>
+
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setIsModalOpen(true)}
+                                        className="buyer-action-btn"
+                                        style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 32px' }}
+                                    >
+                                        <Plus size={20} /> Register Produce
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        style={{
+                                            padding: '16px 32px',
+                                            borderRadius: '12px',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            color: 'white',
+                                            border: '1px solid var(--glass-border)',
+                                            fontWeight: 600,
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => navigate('/analytics')}
+                                    >
+                                        View Analytics
+                                    </motion.button>
+                                </div>
+                            </div>
+
+                            {/* Right Top Actions */}
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className="glass-panel"
+                                    style={{ padding: '12px', borderRadius: '50%', cursor: 'pointer' }}
+                                >
+                                    <Bell size={24} color="var(--primary)" />
+                                    {/* notifications.length > 0 && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '10px', height: '10px', background: 'var(--status-critical)', borderRadius: '50%' }} /> */}
+                                </motion.div>
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className="glass-panel"
+                                    style={{ padding: '12px', borderRadius: '50%', cursor: 'pointer' }}
+                                    onClick={() => navigate('/profile')}
+                                >
+                                    <User size={24} color="var(--primary)" />
+                                </motion.div>
+                            </div>
+                        </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            className="glass-panel"
-                            style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-                        >
-                            <Bell size={18} />
-                            <span style={{ fontSize: '0.875rem' }}>Alerts</span>
-                        </motion.div>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            className="glass-panel"
-                            style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
-                            onClick={() => navigate('/profile')}
-                        >
-                            <User size={18} />
-                            <span style={{ fontSize: '0.875rem' }}>Profile</span>
-                        </motion.div>
-                    </div>
-                </header>
+
+                    {/* Decorative Background Element */}
+                    <div style={{
+                        position: 'absolute',
+                        right: '-50px',
+                        top: '-50px',
+                        width: '300px',
+                        height: '300px',
+                        background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
+                        opacity: 0.2
+                    }} />
+                </section>
 
                 <section className="stats-grid">
-                    <StatCard label="At Risk Produce" value={stats.atRisk} icon={AlertTriangle} color="var(--status-critical)" />
+                    <StatCard label="Critical Alerts" value={stats.atRisk} icon={AlertTriangle} color="var(--status-critical)" />
                     <StatCard label="Total Inventory" value={stats.totalVolume} icon={Package} color="var(--primary)" />
-                    <StatCard label="Nearby Buyers" value={stats.activeBuyers} icon={Truck} color="var(--secondary)" />
+                    <StatCard label="Active Logistics" value={stats.activeBuyers} icon={Truck} color="var(--secondary)" />
                 </section>
 
                 <section className="product-stack-container">
                     <div className="product-stack-header">
                         <div>
-                            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem' }}>Priority Pulse Stack</h2>
-                            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Dynamic AI-sorted urgency queue</p>
+                            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '8px' }}>Active Production Line</h2>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)' }}>Real-time urgency sorted by AI decay algorithms</p>
                         </div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setIsModalOpen(true)}
-                            className="buyer-action-btn"
-                            style={{ width: 'auto', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}
-                        >
-                            <Plus size={18} /> Register Produce
-                        </motion.button>
+                        {/* Filter/Sort Button could go here */}
                     </div>
 
                     <div className="product-stack">
@@ -273,12 +324,12 @@ const Dashboard = ({ user, onNotification }) => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className="glass-panel"
-                                style={{ padding: '40px', textAlign: 'center' }}
+                                style={{ padding: '60px', textAlign: 'center', borderStyle: 'dashed' }}
                             >
-                                <Leaf size={48} color="var(--text-dim)" style={{ margin: '0 auto 16px' }} />
-                                <h3 style={{ color: 'var(--text-muted)', marginBottom: '8px' }}>No produce registered yet</h3>
-                                <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem' }}>
-                                    Click "Register Produce" to add your first item
+                                <Leaf size={64} color="var(--text-dim)" style={{ margin: '0 auto 24px', opacity: 0.5 }} />
+                                <h3 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '1.2rem' }}>Production Line Empty</h3>
+                                <p style={{ color: 'var(--text-dim)' }}>
+                                    Register new produce to start the matching engine.
                                 </p>
                             </motion.div>
                         ) : (
@@ -306,20 +357,28 @@ const Dashboard = ({ user, onNotification }) => {
 
             {/* Right Panel: Buyer Match */}
             <aside className="buyers-panel">
-                <div className="panel-header">
-                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', marginBottom: '8px' }}>Nearby Matches</h2>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                        finding buyers for <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{selectedProduct?.name || 'Produce'}</span>
-                    </p>
+                <div className="panel-header" style={{ marginBottom: '32px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', marginBottom: '8px' }}>Logistics Match</h2>
+                    {selectedProduct ? (
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <div style={{ padding: '8px', background: 'rgba(251, 191, 36, 0.1)', borderRadius: '8px' }}>
+                                <Package size={16} color="var(--primary)" />
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Finding buyers for</div>
+                                <div style={{ fontWeight: 600, color: 'white' }}>{selectedProduct.name}</div>
+                            </div>
+                        </div>
+                    ) : (
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Select an item to view matches</p>
+                    )}
                 </div>
 
-                <div className="buyer-list">
+                <div className="buyer-list" style={{ flex: 1, overflowY: 'auto' }}>
                     {buyers.length === 0 ? (
-                        <div className="glass-panel" style={{ padding: '20px', textAlign: 'center' }}>
-                            <Truck size={32} color="var(--text-dim)" style={{ margin: '0 auto 12px' }} />
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                                No buyers available
-                            </p>
+                        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-dim)' }}>
+                            <Truck size={32} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                            <p>No logistics partners nearby</p>
                         </div>
                     ) : (
                         buyers.map(buyer => (
@@ -328,10 +387,18 @@ const Dashboard = ({ user, onNotification }) => {
                     )}
                 </div>
 
-                <div style={{ marginTop: '24px', padding: '16px', border: '1px dashed var(--glass-border)', borderRadius: '12px' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '8px' }}>🔥 LIVE MATCHING</div>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        AI algorithm optimizes distance, price, and decay window for best matches.
+                {/* Live Status Indicator */}
+                <div style={{ marginTop: '24px', padding: '20px', background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#60a5fa' }}>
+                        <motion.div
+                            animate={{ opacity: [1, 0.5, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            style={{ width: '8px', height: '8px', background: '#60a5fa', borderRadius: '50%' }}
+                        />
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.5px' }}>LIVE NETWORK</span>
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#93c5fd', lineHeight: '1.4' }}>
+                        Scanning 150km radius for optimal fleet availability and pricing.
                     </p>
                 </div>
             </aside>

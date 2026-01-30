@@ -23,32 +23,43 @@ const ChangePassword = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="glass-panel"
-                style={{ width: '100%', maxWidth: '500px', padding: '40px' }}
+                style={{ width: '100%', maxWidth: '500px', padding: '48px', border: '1px solid var(--glass-border)' }}
             >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '40px' }}>
                     <motion.button
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ x: -4 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => navigate('/settings')}
-                        style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}
+                        style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid var(--glass-border)',
+                            color: 'var(--text-main)',
+                            cursor: 'pointer',
+                            padding: '12px',
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
                     >
-                        <ArrowLeft size={24} />
+                        <ArrowLeft size={20} />
                     </motion.button>
-                    <h1 style={{ fontSize: '1.5rem', fontFamily: 'var(--font-display)', margin: 0 }}>Change Password</h1>
+                    <h1 style={{ fontSize: '1.75rem', fontFamily: 'var(--font-display)', margin: 0, fontWeight: 600 }}>Change <span style={{ color: 'var(--primary)' }}>Password</span></h1>
                 </div>
 
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                     <div style={{
-                        width: '80px', height: '80px',
+                        width: '100px', height: '100px',
                         borderRadius: '50%',
-                        background: 'rgba(59, 130, 246, 0.1)',
+                        background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(217, 119, 6, 0.1))',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        margin: '0 auto 16px',
-                        border: '1px solid var(--primary)'
+                        margin: '0 auto 24px',
+                        border: '1px solid var(--primary)',
+                        boxShadow: '0 0 30px rgba(251, 191, 36, 0.1)'
                     }}>
-                        <ShieldCheck size={40} color="var(--primary)" />
+                        <ShieldCheck size={48} color="var(--primary)" />
                     </div>
-                    <p style={{ color: 'var(--text-muted)' }}>Secure your account with a strong password.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Secure your account with a strong password.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>

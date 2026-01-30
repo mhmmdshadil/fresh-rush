@@ -16,7 +16,7 @@ import ChangePassword from './pages/settings/ChangePassword';
 import Privacy from './pages/settings/Privacy';
 
 import { onAuthChange } from './services/authService';
-import './App.css';
+
 
 function App() {
   const [user, setUser] = useState(null);

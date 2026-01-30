@@ -8,18 +8,28 @@ const Privacy = () => {
 
     return (
         <main className="main-content" style={{ overflowY: 'auto' }}>
-            <header style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <header style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <motion.button
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ x: -4 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => navigate('/settings')}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}
+                    style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid var(--glass-border)',
+                        color: 'var(--text-main)',
+                        cursor: 'pointer',
+                        padding: '12px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
                 >
-                    <ArrowLeft size={24} />
+                    <ArrowLeft size={20} />
                 </motion.button>
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)' }}>Privacy Settings</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Manage your data visibility</p>
+                    <h1 style={{ fontSize: '2.5rem', fontFamily: 'var(--font-display)', lineHeight: '1.2', margin: 0 }}>Privacy <span style={{ color: 'var(--primary)' }}>Settings</span></h1>
+                    <p style={{ color: 'var(--text-muted)' }}>Manage your data visibility and permissions</p>
                 </div>
             </header>
 
