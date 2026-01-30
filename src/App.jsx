@@ -29,9 +29,8 @@ function App() {
     const unsubscribe = onAuthChange((currentUser) => {
       setUser(currentUser);
       setLoading(false);
-      if (!currentUser) {
-        setIsAuthModalOpen(true);
-      }
+      // Auto-open modal if not logged in? User requested "Hero with Login CTA", so don't auto-open unless user takes action or purely default.
+      // We will allow landing page to show.
     });
 
     return () => unsubscribe();
@@ -65,17 +64,6 @@ function App() {
     );
   }
 
-  // Show auth modal if not logged in
-  if (!user) {
-    return (
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => { }} // Block closing if required
-        onAuthSuccess={() => setIsAuthModalOpen(false)}
-      />
-    );
-  }
-
   return (
     <BrowserRouter>
       {/* Global Notifications Layer */}
@@ -99,9 +87,22 @@ function App() {
         </AnimatePresence>
       </div>
 
+      {/* Global Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={() => setIsAuthModalOpen(false)}
+      />
+
       <Routes>
         <Route path="/" element={<Layout user={user} onLogoutNotification={addNotification} />}>
-          <Route index element={<Dashboard user={user} onNotification={addNotification} />} />
+          <Route index element={
+            <Dashboard
+              user={user}
+              onNotification={addNotification}
+              onShowAuth={() => setIsAuthModalOpen(true)}
+            />
+          } />
           <Route path="profile" element={<Profile user={user} />} />
           <Route path="deliveries" element={<Deliveries />} />
           <Route path="analytics" element={<Analytics />} />
