@@ -25,16 +25,35 @@ import { seedBuyers } from '../utils/seedData';
 
 const StatCard = ({ label, value, icon: Icon, color }) => (
     <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.02, y: -4 }}
-        className="glass-panel stat-card"
-        style={{ cursor: 'default' }}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        whileHover={{ x: -4, backgroundColor: 'rgba(255,255,255,0.05)' }}
+        className="glass-panel"
+        style={{
+            cursor: 'default',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '24px 32px',
+            borderRadius: '24px',
+            marginBottom: '16px',
+            border: '1px solid var(--glass-border)',
+            background: 'rgba(255,255,255,0.02)'
+        }}
     >
-        <div className="stat-label">{label}</div>
-        <div className="stat-value" style={{ color }}>{value}</div>
-        <div style={{ position: 'absolute', right: '20px', bottom: '20px', opacity: 0.1 }}>
-            <Icon size={48} />
+        <div>
+            <div className="stat-value" style={{ fontSize: '2rem', lineHeight: 1, marginBottom: '4px' }}>{value}</div>
+            <div className="stat-label" style={{ margin: 0, fontSize: '0.85rem', textTransform: 'none', color: 'var(--text-muted)' }}>{label}</div>
+        </div>
+        <div style={{
+            padding: '12px',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <Icon size={24} color={color || 'var(--text-main)'} />
         </div>
     </motion.div>
 );
@@ -216,98 +235,117 @@ const Dashboard = ({ user, onNotification }) => {
     return (
         <>
             <main className="main-content">
-                {/* Hero Section - "Welcome Landscape" Style */}
-                <section style={{
-                    marginBottom: '40px',
-                    background: 'linear-gradient(to right, rgba(251, 191, 36, 0.1), transparent)',
-                    padding: '40px',
-                    borderRadius: '32px',
-                    border: '1px solid var(--glass-border)',
-                    position: 'relative',
-                    overflow: 'hidden'
+                <header style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(400px, 1.5fr) 1fr',
+                    gap: '40px',
+                    marginBottom: '80px',
+                    alignItems: 'start'
                 }}>
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                                <motion.h1
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    style={{ fontSize: '3rem', fontFamily: 'var(--font-display)', lineHeight: '1.2', marginBottom: '16px' }}
-                                >
-                                    Welcome back,<br />
-                                    <span style={{ color: 'var(--primary)' }}>{user.displayName || 'Farmer'}</span>
-                                </motion.h1>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '500px', marginBottom: '32px' }}>
-                                    Your command center is active. You have <span style={{ color: 'white', fontWeight: 'bold' }}>{stats.atRisk} critical alerts</span> requiring immediate attention today.
-                                </p>
+                    <div style={{ paddingTop: '20px' }}>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{
+                                fontSize: '4rem',
+                                fontFamily: 'var(--font-display)',
+                                lineHeight: '1.1',
+                                marginBottom: '24px',
+                                fontWeight: 600,
+                                letterSpacing: '-1px'
+                            }}
+                        >
+                            Green<br />
+                            <span style={{ color: 'var(--text-muted)', fontWeight: 300 }}>Operations</span>
+                        </motion.h1>
 
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => setIsModalOpen(true)}
-                                        className="buyer-action-btn"
-                                        style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 32px' }}
-                                    >
-                                        <Plus size={20} /> Register Produce
-                                    </motion.button>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        style={{
-                                            padding: '16px 32px',
-                                            borderRadius: '12px',
-                                            background: 'rgba(255,255,255,0.05)',
-                                            color: 'white',
-                                            border: '1px solid var(--glass-border)',
-                                            fontWeight: 600,
-                                            cursor: 'pointer'
-                                        }}
-                                        onClick={() => navigate('/analytics')}
-                                    >
-                                        View Analytics
-                                    </motion.button>
-                                </div>
-                            </div>
+                        <p style={{
+                            color: 'var(--text-muted)',
+                            fontSize: '1.1rem',
+                            maxWidth: '480px',
+                            marginBottom: '40px',
+                            lineHeight: '1.6'
+                        }}>
+                            Revolutionizing agricultural logistics with AI-driven decay prediction and instant buyer matching.
+                        </p>
 
-                            {/* Right Top Actions */}
-                            <div style={{ display: 'flex', gap: '16px' }}>
-                                <motion.div
-                                    whileHover={{ scale: 1.05 }}
-                                    className="glass-panel"
-                                    style={{ padding: '12px', borderRadius: '50%', cursor: 'pointer' }}
-                                >
-                                    <Bell size={24} color="var(--primary)" />
-                                    {/* notifications.length > 0 && <div style={{ position: 'absolute', top: '10px', right: '10px', width: '10px', height: '10px', background: 'var(--status-critical)', borderRadius: '50%' }} /> */}
-                                </motion.div>
-                                <motion.div
-                                    whileHover={{ scale: 1.05 }}
-                                    className="glass-panel"
-                                    style={{ padding: '12px', borderRadius: '50%', cursor: 'pointer' }}
-                                    onClick={() => navigate('/profile')}
-                                >
-                                    <User size={24} color="var(--primary)" />
-                                </motion.div>
-                            </div>
+                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setIsModalOpen(true)}
+                                className="buyer-action-btn"
+                                style={{
+                                    width: 'auto',
+                                    background: 'white',
+                                    color: 'black',
+                                    padding: '16px 32px',
+                                    borderRadius: '40px',
+                                    fontSize: '1rem'
+                                }}
+                            >
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    Open Catalog <Plus size={18} />
+                                </span>
+                            </motion.button>
+
+                            <motion.button
+                                whileHover={{ x: 4 }}
+                                onClick={() => navigate('/analytics')}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'var(--text-main)',
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    fontWeight: 500,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                View Analytics <TrendingUp size={16} />
+                            </motion.button>
                         </div>
                     </div>
 
-                    {/* Decorative Background Element */}
-                    <div style={{
-                        position: 'absolute',
-                        right: '-50px',
-                        top: '-50px',
-                        width: '300px',
-                        height: '300px',
-                        background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
-                        opacity: 0.2
-                    }} />
-                </section>
-
-                <section className="stats-grid">
-                    <StatCard label="Critical Alerts" value={stats.atRisk} icon={AlertTriangle} color="var(--status-critical)" />
-                    <StatCard label="Total Inventory" value={stats.totalVolume} icon={Package} color="var(--primary)" />
-                    <StatCard label="Active Logistics" value={stats.activeBuyers} icon={Truck} color="var(--secondary)" />
-                </section>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <StatCard
+                            label="Critical Alerts"
+                            value={stats.atRisk}
+                            icon={AlertTriangle}
+                            color="var(--status-critical)"
+                        />
+                        <StatCard
+                            label="Total Volume"
+                            value={stats.totalVolume}
+                            icon={Package}
+                            color="var(--text-main)"
+                        />
+                        <StatCard
+                            label="Logistics Partners"
+                            value={stats.activeBuyers}
+                            icon={Truck}
+                            color="var(--status-fresh)"
+                        />
+                        <div style={{
+                            marginTop: '16px',
+                            padding: '24px',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '24px',
+                            border: '1px solid var(--glass-border)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                        }}>
+                            <div>
+                                <div style={{ fontSize: '2rem', fontFamily: 'var(--font-display)', fontWeight: 700 }}>98%</div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Network Uptime</div>
+                            </div>
+                            <CheckCircle size={24} color="var(--status-fresh)" />
+                        </div>
+                    </div>
+                </header>
 
                 <section className="product-stack-container">
                     <div className="product-stack-header">

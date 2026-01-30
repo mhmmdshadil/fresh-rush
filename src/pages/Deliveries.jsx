@@ -69,7 +69,7 @@ const Deliveries = () => {
                                 width: '64px',
                                 height: '64px',
                                 borderRadius: '20px',
-                                background: delivery.status === 'Delivered' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                                background: delivery.status === 'Delivered' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -126,7 +126,7 @@ const Deliveries = () => {
                             <div style={{
                                 padding: '6px 12px',
                                 borderRadius: '8px',
-                                background: delivery.status === 'Delivered' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                                background: delivery.status === 'Delivered' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(255, 255, 255, 0.1)',
                                 color: delivery.status === 'Delivered' ? 'var(--status-fresh)' : 'var(--primary)',
                                 fontSize: '0.8rem',
                                 fontWeight: 700,

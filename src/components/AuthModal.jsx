@@ -75,7 +75,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
                     padding: '40px',
                     position: 'relative',
                     borderRadius: '24px',
-                    border: '1px solid rgba(251, 191, 36, 0.2)',
+                    border: '1px solid var(--glass-border)',
                     boxShadow: '0 0 40px rgba(0,0,0,0.5)'
                 }}
             >
